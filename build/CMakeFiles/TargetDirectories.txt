@@ -1,0 +1,4 @@
+/home/thomas/Documents/FTests/FTests/build/CMakeFiles/edit_cache.dir
+/home/thomas/Documents/FTests/FTests/build/CMakeFiles/ftests.dir
+/home/thomas/Documents/FTests/FTests/build/CMakeFiles/rebuild_cache.dir
+/home/thomas/Documents/FTests/FTests/build/CMakeFiles/file_test.dir
