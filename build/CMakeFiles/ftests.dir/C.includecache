@@ -45,6 +45,8 @@ main.h
 /home/thomas/Documents/FTests/FTests/src/main.h
 tests.h
 /home/thomas/Documents/FTests/FTests/src/tests.h
+utilitaries.h
+/home/thomas/Documents/FTests/FTests/src/utilitaries.h
 signal.h
 -
 setjmp.h
@@ -59,8 +61,20 @@ wait.h
 -
 stdlib.h
 -
+sys/types.h
+-
+sys/stat.h
+-
+fcntl.h
+-
 
 /home/thomas/Documents/FTests/FTests/src/utilitaries.c
 stdio.h
 -
+stdlib.h
+-
+utilitaries.h
+/home/thomas/Documents/FTests/FTests/src/utilitaries.h
+string.h
+/home/thomas/Documents/FTests/FTests/src/string.h
 

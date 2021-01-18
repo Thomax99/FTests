@@ -12,7 +12,9 @@ CMakeFiles/ftests.dir/main.c.o: /home/thomas/Documents/FTests/FTests/src/main.c
 
 CMakeFiles/ftests.dir/tests.c.o: /home/thomas/Documents/FTests/FTests/src/../include/main.h
 CMakeFiles/ftests.dir/tests.c.o: /home/thomas/Documents/FTests/FTests/src/../include/tests.h
+CMakeFiles/ftests.dir/tests.c.o: /home/thomas/Documents/FTests/FTests/src/../include/utilitaries.h
 CMakeFiles/ftests.dir/tests.c.o: /home/thomas/Documents/FTests/FTests/src/tests.c
 
+CMakeFiles/ftests.dir/utilitaries.c.o: /home/thomas/Documents/FTests/FTests/src/../include/utilitaries.h
 CMakeFiles/ftests.dir/utilitaries.c.o: /home/thomas/Documents/FTests/FTests/src/utilitaries.c
 
