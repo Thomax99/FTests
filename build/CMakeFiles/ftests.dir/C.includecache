@@ -10,7 +10,15 @@
 main.h
 /home/thomas/Documents/FTests/FTests/src/../include/main.h
 
+/home/thomas/Documents/FTests/FTests/src/../include/ftests_structures.h
+
+/home/thomas/Documents/FTests/FTests/src/../include/func_args.h
+ftests_structures.h
+/home/thomas/Documents/FTests/FTests/src/../include/ftests_structures.h
+
 /home/thomas/Documents/FTests/FTests/src/../include/main.h
+func_args.h
+/home/thomas/Documents/FTests/FTests/src/../include/func_args.h
 
 /home/thomas/Documents/FTests/FTests/src/../include/tests.h
 main.h
@@ -29,6 +37,20 @@ main.h
 /home/thomas/Documents/FTests/FTests/src/main.h
 utilitaries.h
 /home/thomas/Documents/FTests/FTests/src/utilitaries.h
+ftests_get_args.h
+/home/thomas/Documents/FTests/FTests/src/ftests_get_args.h
+
+/home/thomas/Documents/FTests/FTests/src/func_args.c
+func_args.h
+/home/thomas/Documents/FTests/FTests/src/func_args.h
+utilitaries.h
+/home/thomas/Documents/FTests/FTests/src/utilitaries.h
+stdlib.h
+-
+stdio.h
+-
+string.h
+-
 
 /home/thomas/Documents/FTests/FTests/src/main.c
 stdio.h
@@ -45,6 +67,8 @@ main.h
 /home/thomas/Documents/FTests/FTests/src/main.h
 tests.h
 /home/thomas/Documents/FTests/FTests/src/tests.h
+ftests_get_args.h
+/home/thomas/Documents/FTests/FTests/src/ftests_get_args.h
 utilitaries.h
 /home/thomas/Documents/FTests/FTests/src/utilitaries.h
 signal.h
@@ -66,6 +90,8 @@ sys/types.h
 sys/stat.h
 -
 fcntl.h
+-
+errno.h
 -
 
 /home/thomas/Documents/FTests/FTests/src/utilitaries.c

@@ -7,5 +7,5 @@ set(CMAKE_C_FLAGS_RELEASE "-O3") ### options spécifiques
 include_directories(../include)
 
 
-add_executable(ftests main.c tests.c ftests_get_args.c utilitaries.c)
+add_executable(ftests main.c tests.c ftests_get_args.c utilitaries.c func_args.c)
 add_executable(file_test test_file.c)

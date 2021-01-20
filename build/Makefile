@@ -163,6 +163,33 @@ ftests_get_args.c.s:
 	$(MAKE) -f CMakeFiles/ftests.dir/build.make CMakeFiles/ftests.dir/ftests_get_args.c.s
 .PHONY : ftests_get_args.c.s
 
+func_args.o: func_args.c.o
+
+.PHONY : func_args.o
+
+# target to build an object file
+func_args.c.o:
+	$(MAKE) -f CMakeFiles/ftests.dir/build.make CMakeFiles/ftests.dir/func_args.c.o
+.PHONY : func_args.c.o
+
+func_args.i: func_args.c.i
+
+.PHONY : func_args.i
+
+# target to preprocess a source file
+func_args.c.i:
+	$(MAKE) -f CMakeFiles/ftests.dir/build.make CMakeFiles/ftests.dir/func_args.c.i
+.PHONY : func_args.c.i
+
+func_args.s: func_args.c.s
+
+.PHONY : func_args.s
+
+# target to generate assembly for a file
+func_args.c.s:
+	$(MAKE) -f CMakeFiles/ftests.dir/build.make CMakeFiles/ftests.dir/func_args.c.s
+.PHONY : func_args.c.s
+
 main.o: main.c.o
 
 .PHONY : main.o
@@ -284,6 +311,9 @@ help:
 	@echo "... ftests_get_args.o"
 	@echo "... ftests_get_args.i"
 	@echo "... ftests_get_args.s"
+	@echo "... func_args.o"
+	@echo "... func_args.i"
+	@echo "... func_args.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

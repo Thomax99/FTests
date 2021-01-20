@@ -3,6 +3,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/ftests.dir/tests.c.o"
   "CMakeFiles/ftests.dir/ftests_get_args.c.o"
   "CMakeFiles/ftests.dir/utilitaries.c.o"
+  "CMakeFiles/ftests.dir/func_args.c.o"
   "ftests.pdb"
   "ftests"
 )

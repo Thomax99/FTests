@@ -28,6 +28,12 @@ int main(int argc, char * argv[]) {
         case OUTPUTPROBLEMRETURN :
             fprintf(stderr, "[OUTPUT ERROR]\n") ;
             break ;
+        case COMPILATIONERRORRETURN :
+            fprintf(stderr, "[COMPILATION ERROR]\n") ;
+            break ;
+        case ANORMALFUNCTIONRETURNERROR :
+            fprintf(stderr, "[FUNCTION RETURN ERROR]\n") ;
+            break ;
         default :
             fprintf(stderr, "ERROR\n") ;
             break ;

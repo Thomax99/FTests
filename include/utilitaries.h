@@ -11,8 +11,8 @@
      * @brief permits to the program to change the char on string, particulary for the char which products interferences with a good display (for example \n)
      * 
      * @param input the character which has to be change
-     * @return char * a corresponding string
+     * @param dst the string destination of the corresponding string
      */
-    char * change_char(char input) ;
+    void change_char(char input, char * dst) ;
 
 #endif

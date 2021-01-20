@@ -15,39 +15,39 @@ void usage(){
     fprintf(stderr, " [--timeEnabled time] : stop the test after time seconds\n") ;
     fprintf(stderr, " [--enableReturnCode code] : test if the return code of the program is code (useful just if the first argument is -c)\n") ;
     fprintf(stderr, " [--testOutput output] : test if the standard output of the program or the function is the same than the one which is given on the file output\n") ;
-    fprintf(stderr, "In case that the first argument is -c, you can give to the program by specifying --args and after give arguments\n") ;
+    fprintf(stderr, "In case that the first argument is -c, you can give arguments to the program by specifying --args and after give arguments\n") ;
+    fprintf(stderr, "In case that the first argument is -f, you can give arguments to the function by specifying --args and after give arguments like arg1 typeArg arg2 typeArg ... (typeArg in {int|float|string})\n") ;
+    fprintf(stderr, " [--function func {int|float|string} retValue] test the function func in the c file given previously (only if the argument is -f). You have to give after a return type (nothing else than int, float or string) and at final a retValue corresponding to the type given\n") ;
     fprintf(stderr, "---********************************---\n") ;
     fprintf(stderr, "show if all is good or the type of error. This framework tests also currents exceptions\n") ;
 
 }
 
-char * change_char(char input){
-    char * ret = malloc(sizeof(char)*20) ;
+void change_char(char input, char * dst){
     switch(input){
         case('\n') :
-            sprintf(ret, "Newline") ;
+            sprintf(dst, "Newline") ;
             break ;
         case('\a') :
-            sprintf(ret, "Alert") ;
+            sprintf(dst, "Alert") ;
             break ;
         case('\b') :
-            sprintf(ret, "Backspace") ;
+            sprintf(dst, "Backspace") ;
             break ;
         case('\t') :
-            sprintf(ret, "Horizontal tab") ;
+            sprintf(dst, "Horizontal tab") ;
             break ;
         case('\v') :
-            sprintf(ret, "Vertical tab") ;
+            sprintf(dst, "Vertical tab") ;
             break ;
         case('\r') :
-            sprintf(ret, "Carriage return") ;
+            sprintf(dst, "Carriage return") ;
             break ;
         case(' ') :
-            sprintf(ret, "Space") ;
+            sprintf(dst, "Space") ;
             break ;
         default :
-            sprintf(ret, "%c", input) ;
+            sprintf(dst, "%c", input) ;
             break ;
     }
-    return ret ;
 }
