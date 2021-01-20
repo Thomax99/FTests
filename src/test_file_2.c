@@ -1,6 +1,11 @@
 #include <stdio.h>
 
-int func(char * str, int integer){
+char * func(char * str, int integer){
+    printf("%s \n", str) ;
+    return str ;
+}
+
+int func2(char * str, int integer){
     printf("%s \n", str) ;
     return integer ;
 }

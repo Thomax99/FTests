@@ -27,7 +27,9 @@
         int normalCode ;
         int testOutputRequired ;
         char * outputFilename ;
-        ftests_function_t * func ;
+        ftests_function_t ** funcs ;
+        int nb_function_to_test ;
+        int nb_max_function ;
         int testTimeRequired ; // to know if we have to manage a time testing
         long maxTimeRequired ;
         char * programName ; //the name of the program

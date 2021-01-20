@@ -29,7 +29,6 @@ void handler(int signal){
 
 
 int ftests_test_main(ftests_args_t * args){
-
     if (args->functionProgramTest){
         //we have to make a file and compile it
 
@@ -38,17 +37,31 @@ int ftests_test_main(ftests_args_t * args){
             perror("creating file for function testing") ;
             exit(1) ;
         }
-        char header[strlen("#include \" \"\n #include <string.h>\n ")+strlen(args->programName)+3] ;
+        char header[strlen("#include \" \"\n#include <string.h>\n#include <stdio.h>\n")+strlen(args->programName)+3] ;
         sprintf(header, "#include \"%s\"\n #include <string.h>\n", args->programName) ;
 
         write(fd, header, strlen(header)) ;
 
-        char * firstLine = "\nint main(){\n" ;
+        char * firstLine = "\nint main(){\nint test;\n" ;
         write(fd, firstLine, strlen(firstLine)) ;
-        char * sLine = getFunctionTest(args->func) ;
-        write(fd, sLine, strlen(sLine)) ;
-        free(sLine) ;
-        char *fLine ="return test ;\n}" ;
+
+        for(int i = 0 ; i < args->nb_function_to_test; i++){
+            char * sLine = getFunctionTest(args->funcs[i]) ;
+
+            write(fd, sLine, strlen(sLine)) ;
+            free(sLine) ;
+
+            char * tLine = "if (!test){\n" ;
+            write(fd, tLine, strlen(tLine)) ;
+
+            char  tLineb[strlen("fprintf(stderr, \"You're function  doesn't return \\n\");\n}\n")+ strlen(args->funcs[i]->name) + strlen(args->funcs[i]->value) + 1] ;
+
+            sprintf(tLineb, "fprintf(stderr, \"You're function %s doesn't return %s\\n\");\n}\n", args->funcs[i]->name, args->funcs[i]->value) ;
+            write(fd, tLineb, strlen(tLineb)) ;
+
+        }
+
+        char *fLine ="return 0 ;\n}" ;
         write(fd, fLine, strlen(fLine)) ;
         close(fd) ;
 
@@ -65,7 +78,7 @@ int ftests_test_main(ftests_args_t * args){
         waitpid(pid, &status, 0) ;
         fprintf(stderr, "___ ... END OF GCC COMPILATION  ___\n\n\n") ;
         if (WEXITSTATUS(status) != 0){
-            fprintf(stderr, "function error : the compilation of %s on the file %s is impossible\n", args->func->name, args->programName) ;
+            fprintf(stderr, "function error : the compilation of %s on the file %s is impossible\n", args->funcs[0]->name, args->programName) ;
             compilationError = 1 ;
         }
         args->programName = "./tmp1" ;
@@ -74,7 +87,7 @@ int ftests_test_main(ftests_args_t * args){
         args->testReturnCodeRequired = 1;
         args->normalCode = 0 ;
 
-        remove("./tmp1.c") ;
+        //remove("./tmp1.c") ;
         if (compilationError){
             remove ("./tmp1") ;
             return COMPILATIONERRORRETURN ;
@@ -101,6 +114,9 @@ int ftests_test_main(ftests_args_t * args){
             close(tube[0]) ;
             dup2(tube[1], 1) ;
             close(tube[1]) ;
+        }
+        else {
+            close(1) ;
         }
         if (args->arguments_enabled){
             *(args->arguments_program) = args->programName ; //uggly manip but we ensure that this is good : args are not the first argument : there is the first argument --args before ...
@@ -147,7 +163,7 @@ int ftests_test_main(ftests_args_t * args){
     }
     int status ;
     waitpid(pid_son, &status, 0) ;
-    fprintf(stderr, "\nEND OF PROGRAM EXECUTION\n\n\n")  ;
+    fprintf(stderr, "\n\nEND OF PROGRAM EXECUTION\n\n\n")  ;
     if (args->functionProgramTest) remove("./tmp1") ;
     if (outputProblem || sizeProblem){
             return OUTPUTPROBLEMRETURN ;
@@ -183,7 +199,7 @@ int ftests_test_main(ftests_args_t * args){
         if (WEXITSTATUS(status) != args->normalCode){
             if (args->functionProgramTest){
                 // the function doesn't return the good thing
-                fprintf(stderr, "function error -> your function %s doesn't return %s as you want\n", args->func->name, args->func->value) ;
+                fprintf(stderr, "function error -> your function %s doesn't return %s as you want\n", args->funcs[0]->name, args->funcs[0]->value) ;
                 return ANORMALFUNCTIONRETURNERROR ;
             }
             fprintf(stderr, "return code -> the program has returned %d while it should have return %d\n", WEXITSTATUS(status), args->normalCode) ;

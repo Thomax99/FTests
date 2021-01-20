@@ -21,7 +21,10 @@ void free_args(ftests_args_t * args){
         fprintf(stderr, "error : you try to free a null arg") ;
         return ;
     }
-    free(args->func) ;
+    for(int i = 0; i < args->nb_function_to_test; i++){
+        ftests_function_free(args->funcs[i]) ;
+    }
+    free(args->funcs) ;
     free(args) ;
 }
 
@@ -44,6 +47,9 @@ void get_args(ftests_args_t * args, int argc, char ** argv){
         }
         else if (strcmp(argv[i], "-f") == 0){
             args->functionProgramTest = 1 ;
+            args->nb_function_to_test = 0 ;
+            args->nb_max_function = 10 ;
+            args->funcs = malloc(sizeof(ftests_function_t *) *args->nb_max_function) ;
         }
         else if (strcmp(argv[i], "--function") == 0){
             if (args->compilatedProgramTest){
@@ -56,7 +62,25 @@ void get_args(ftests_args_t * args, int argc, char ** argv){
                 usage() ;
                 exit(1) ;
             }
-            args->func = ftests_function_initializer(argv[i+1], argv[i+3], argv[i+2]) ;
+            if (args->nb_function_to_test == args->nb_max_function){
+                args->nb_function_to_test*=2 ;
+                args->funcs = realloc(args->funcs, sizeof(ftests_function_t *) *args->nb_function_to_test) ;
+            }
+            args->funcs[args->nb_function_to_test] = ftests_function_initializer(argv[i+1], argv[i+3], argv[i+2]) ; //function creation
+
+            // now we have to make the arguments
+            int nb_args = 0 ;
+            i+=4 ;
+            for(; i < argc && (strcmp(argv[i], "--endFunc")!=0); i++){
+                //we have arguments
+                nb_args++ ;
+            }
+            if (nb_args&1){
+                fprintf(stderr, "For testing a function with arguments, you need to give for each argument a pear (value type)\n") ;
+                usage() ;
+                exit(1) ;
+            }
+            ftests_function_make_arguments(args->funcs[args->nb_function_to_test++], argv+i-nb_args, nb_args) ;
         }
         else if (strcmp(argv[i], "--timeEnabled") == 0){
             //we have a time value
@@ -104,15 +128,9 @@ void get_args(ftests_args_t * args, int argc, char ** argv){
                 args->arguments_program = argv+i ;
             }
             else {
-                int nb_args_staying = argc - i-1 ;
-                if (nb_args_staying&1){
-                    fprintf(stderr, "For testing a function with arguments, you need to give for each argument a pear value type\n") ;
-                    usage() ;
-                    exit(1) ;
-                }
-                if (args->func != NULL){
-                    ftests_function_make_arguments(args->func, argv+i+1, nb_args_staying) ;
-                }
+                fprintf(stderr, "The option --args is impossible with function testing\n") ;
+                usage() ;
+                exit(1) ;
             }
 
             break ; // after --args, there is no arguments for the code
@@ -133,7 +151,7 @@ void get_args(ftests_args_t * args, int argc, char ** argv){
         usage() ;
         exit(1) ;
     }
-    if (args->functionProgramTest && args->func == NULL){
+    if (args->functionProgramTest && args->funcs == NULL){
         fprintf(stderr, "with -f option, you need to give the argument --function\n") ;
         usage() ;
         exit(1) ;

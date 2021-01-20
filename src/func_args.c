@@ -23,13 +23,13 @@ ftests_function_t * ftests_function_initializer(char * name, char * retValue, ch
         usage() ;
         exit(1) ;
     }
+
     if (value->returntype == STRINGTYPE){
         value->value = retValue ;
     }
     else if (value->returntype == INTTYPE){
         char * endPtr ;
-        int *ret = malloc(sizeof(int)) ;
-        *ret = strtol(retValue, &endPtr, 10) ;
+        strtol(retValue, &endPtr, 10) ;
         if (*endPtr != '\0'){
         fprintf(stderr, "the return value has to be valid : %s is not valid\n", retValue) ;
         usage() ;
@@ -39,8 +39,7 @@ ftests_function_t * ftests_function_initializer(char * name, char * retValue, ch
     }
     else{
         char * endPtr ;
-        float *ret = malloc(sizeof(float)) ;
-        *ret = strtod(retValue, &endPtr) ;
+        strtod(retValue, &endPtr) ;
         if (*endPtr != '\0'){
             fprintf(stderr, "the return value has to be valid : %s is not valid\n", retValue) ;
             usage() ;
@@ -64,7 +63,7 @@ void ftests_function_make_arguments(ftests_function_t * func, char ** args, int 
             (func->arguments+i)->isString = 1 ;
         }
         else {
-            fprintf(stderr, "the arguments given at a function have tge shape argument {int|float|string}\n") ;
+            fprintf(stderr, "the arguments given at a function have the shape argument {int|float|string}\n") ;
             usage() ;
             exit(1) ;
         }
@@ -75,13 +74,12 @@ void ftests_function_make_arguments(ftests_function_t * func, char ** args, int 
 void ftests_function_free(ftests_function_t * func){
     if (func != NULL){
         if (func->nb_arguments > 0) free(func->arguments) ;
-        if (func->returntype != STRINGTYPE)
-            free(func->value) ;
         free(func) ;
     }
 }
 
 void getFunctionReturnType(char * dst, ftests_function_t * func){
+
     if (func->returntype == INTTYPE){
         sprintf(dst, "int ") ;
     }
@@ -121,25 +119,26 @@ void makeArguments(char * dst, ftests_function_argument_t * arguments, int nb_ar
     }
 }
 
+
 char * getFunctionTest(ftests_function_t * func){
     int size = 128, act_size = 0 ;
     char * dst = malloc(size*sizeof(char)) ;
-    char type[MAXLEN] ; getFunctionReturnType(type, func) ;
-    mystrncat(dst, type, strlen(type), &size, &act_size) ;
-    char func_call[strlen("val = ")+strlen(func->name)+strlen("();\n") + 1] ;
-    sprintf(func_call, "val = %s(", func->name) ;
-    mystrncat(dst, func_call, strlen(func_call), &size, &act_size) ;
-    makeArguments(dst, func->arguments, func->nb_arguments, &size, &act_size) ;
-    mystrncat(dst, ");\n", strlen(");\n"), &size, &act_size) ;
-    mystrncat(dst, "int test = ", strlen("int test = "), &size, &act_size) ;
     if (func->returntype == INTTYPE || func->returntype == FLOATTYPE){
-        char valueTest[strlen("val != ")+strlen(func->value)+1] ;
-        sprintf(valueTest, "val != %s;\n", func->value) ;
+        char func_call[strlen("test = (")+strlen(func->name)+ 1] ;
+        sprintf(func_call, "test = (%s(", func->name) ;
+        mystrncat(dst, func_call, strlen(func_call), &size, &act_size) ;
+        makeArguments(dst, func->arguments, func->nb_arguments, &size, &act_size) ;
+        char valueTest[strlen(") == ")+strlen(func->value)+strlen(");\n")] ;
+        sprintf(valueTest, ") == %s);\n", func->value) ;
         mystrncat(dst,valueTest, strlen(valueTest), &size, &act_size) ;
     }
     else {
-        char valueTest[strlen("strcmp(val, \"\");\n") + strlen(func->value) + 1] ;
-        sprintf(valueTest, "strcmp(val, \"%s\");\n", func->value) ;
+        char func_call[strlen("test = (strcmp(")+strlen(func->name)+ 2] ;
+        sprintf(func_call, "test = (strcmp(%s(", func->name) ;
+        mystrncat(dst, func_call, strlen(func_call), &size, &act_size) ;
+        makeArguments(dst, func->arguments, func->nb_arguments, &size, &act_size) ;
+        char valueTest[strlen("), \"")+strlen(func->value)+strlen("\") == 0);\n")] ;
+        sprintf(valueTest, "), \"%s\") == 0);\n", func->value) ;
         mystrncat(dst,valueTest, strlen(valueTest), &size, &act_size) ;
     }
     return dst ;
