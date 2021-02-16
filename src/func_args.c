@@ -6,8 +6,9 @@
 
 #define MAXLEN strlen("char * ") //the max size of a type is 10
 
-ftests_function_t * ftests_function_initializer(char * name, char * retValue, char * returnType){
+ftests_function_t * ftests_function_initializer(char * name, char * retValue, char * returnType, int *  nb_args_to_jump){
     ftests_function_t * value = malloc(sizeof(ftests_function_t)) ;
+    *nb_args_to_jump = 4 ;
     value->name = name ;
     if (strcmp(returnType, "int") == 0){
         value->returntype = INTTYPE ;
@@ -17,6 +18,10 @@ ftests_function_t * ftests_function_initializer(char * name, char * retValue, ch
     }
     else if (strcmp(returnType, "string") == 0){
         value->returntype = STRINGTYPE ;
+    }
+    else if (strcmp(returnType, "void") == 0){
+        value->returntype = VOIDTYPE ;
+        *nb_args_to_jump = 3 ;
     }
     else {
         fprintf(stderr, "you have to give a return type in {int, float, string}\n") ;
@@ -36,6 +41,9 @@ ftests_function_t * ftests_function_initializer(char * name, char * retValue, ch
         exit(1) ;
         }
         value->value = retValue ;
+    }
+    else if (value->returntype == VOIDTYPE){
+        value->value = returnType ;
     }
     else{
         char * endPtr ;
@@ -130,6 +138,14 @@ char * getFunctionTest(ftests_function_t * func){
         makeArguments(dst, func->arguments, func->nb_arguments, &size, &act_size) ;
         char valueTest[strlen(") == ")+strlen(func->value)+strlen(");\n")] ;
         sprintf(valueTest, ") == %s);\n", func->value) ;
+        mystrncat(dst,valueTest, strlen(valueTest), &size, &act_size) ;
+    }
+    else if (func->returntype == VOIDTYPE){
+        char func_call[strlen("test = 1 ;\n (;\n")+strlen(func->name)+ 1] ;
+        sprintf(func_call, "test = 1 ;\n%s(", func->name) ;
+        mystrncat(dst, func_call, strlen(func_call), &size, &act_size) ;
+        makeArguments(dst, func->arguments, func->nb_arguments, &size, &act_size) ;
+        char* valueTest = ") ;\n" ;
         mystrncat(dst,valueTest, strlen(valueTest), &size, &act_size) ;
     }
     else {

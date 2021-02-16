@@ -57,7 +57,11 @@ void get_args(ftests_args_t * args, int argc, char ** argv){
                 usage() ;
                 exit(1) ;
             }
-            if (argc < i+4){
+            if (argc < i+3){
+                fprintf(stderr, "you have to give at least a function name, and a return type --function\n") ;
+
+            }
+            if (strcmp(argv[i+2], "void") != 0 && argc < i+4){
                 fprintf(stderr, "you have to give a function name, a type and a value after --function\n") ;
                 usage() ;
                 exit(1) ;
@@ -66,11 +70,12 @@ void get_args(ftests_args_t * args, int argc, char ** argv){
                 args->nb_function_to_test*=2 ;
                 args->funcs = realloc(args->funcs, sizeof(ftests_function_t *) *args->nb_function_to_test) ;
             }
-            args->funcs[args->nb_function_to_test] = ftests_function_initializer(argv[i+1], argv[i+3], argv[i+2]) ; //function creation
+            int nb_args_to_jump ;
+            args->funcs[args->nb_function_to_test] = ftests_function_initializer(argv[i+1], argv[i+3], argv[i+2], &nb_args_to_jump) ; //function creation
 
             // now we have to make the arguments
             int nb_args = 0 ;
-            i+=4 ;
+            i+=nb_args_to_jump ;
             for(; i < argc && (strcmp(argv[i], "--endFunc")!=0); i++){
                 //we have arguments
                 nb_args++ ;
@@ -99,6 +104,25 @@ void get_args(ftests_args_t * args, int argc, char ** argv){
                 exit(1) ;
             }
             args->maxTimeRequired = time ;
+        }
+        else if (strcmp(argv[i], "--repeatTest") == 0){
+            //we have a to repeat the test value
+            fprintf(stderr, "here\n") ;
+            args->repeatedTestRequired = 1 ;
+            if (i+1 >= argc){
+                //error
+                fprintf(stderr, "you have to give a number after enabling the repeating of tests\n") ;
+                usage() ;
+                exit(1) ;
+            }
+            char * endPtr ;
+            long times = strtol(argv[i+1], &endPtr, 10) ;
+            if (*endPtr != '\0'){
+                fprintf(stderr, "the repeating value has to be valid : %s is not valid\n", argv[i+1]) ;
+                usage() ;
+                exit(1) ;
+            }
+            args->timesRepeatTest = times ;
         }
         else if (strcmp(argv[i], "--enableReturnCode") == 0){
             if (args->functionProgramTest){

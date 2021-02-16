@@ -1,7 +1,7 @@
 #ifndef MAINH
     #include "func_args.h"
 
-    #define MAINH 1
+    #define MAINH
 
     #define ANORMALFUNCTIONRETURNERROR -6
     #define COMPILATIONERRORRETURN -5

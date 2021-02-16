@@ -1,6 +1,6 @@
 #ifndef FTESTARGSH
 
-    #define  FTESTARGSH 1
+    #define  FTESTARGSH
 
     #define INTTYPE 1
     #define FLOATTYPE 2

@@ -32,6 +32,8 @@
         int nb_max_function ;
         int testTimeRequired ; // to know if we have to manage a time testing
         long maxTimeRequired ;
+        int repeatedTestRequired ; // to know if we have to make the test more than one time
+        long timesRepeatTest ;
         char * programName ; //the name of the program
         int arguments_enabled ;
         char ** arguments_program ;

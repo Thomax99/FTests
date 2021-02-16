@@ -45,6 +45,11 @@ int ftests_test_main(ftests_args_t * args){
         char * firstLine = "\nint main(){\nint test;\n" ;
         write(fd, firstLine, strlen(firstLine)) ;
 
+        if (!args->repeatedTestRequired)
+            args->timesRepeatTest = 1 ;
+        char secondLine[strlen("for(int line = 0; line <  ; line++){\n") + args->timesRepeatTest + 2] ;
+        sprintf(secondLine, "for(int line = 0; line < %ld ; line++){\n", args->timesRepeatTest) ;
+        write(fd, secondLine, strlen(secondLine)) ;
         for(int i = 0 ; i < args->nb_function_to_test; i++){
             char * sLine = getFunctionTest(args->funcs[i]) ;
 
@@ -60,6 +65,9 @@ int ftests_test_main(ftests_args_t * args){
             write(fd, tLineb, strlen(tLineb)) ;
 
         }
+        char * thirdLine ="}\n" ;
+        write(fd, thirdLine, strlen(thirdLine)) ;
+
 
         char *fLine ="return 0 ;\n}" ;
         write(fd, fLine, strlen(fLine)) ;
@@ -87,7 +95,7 @@ int ftests_test_main(ftests_args_t * args){
         args->testReturnCodeRequired = 1;
         args->normalCode = 0 ;
 
-        //remove("./tmp1.c") ;
+        remove("./tmp1.c") ;
         if (compilationError){
             remove ("./tmp1") ;
             return COMPILATIONERRORRETURN ;

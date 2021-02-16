@@ -1,7 +1,7 @@
 
 #ifndef UTISH
 
-    #define UTISH 1
+    #define UTISH
     /**
      * @brief show how could be used this test framework
      */

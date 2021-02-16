@@ -17,6 +17,7 @@ void usage(){
     fprintf(stderr, " [--testOutput output] : test if the standard output of the program or the function is the same than the one which is given on the file output\n") ;
     fprintf(stderr, "In case that the first argument is -c, you can give arguments to the program by specifying --args and after give arguments\n") ;
     fprintf(stderr, " [--function func {int|float|string} retValue [typeArg1 arg1 typeArg2 arg2 ] --endFunc] tests the function func in the c file given previously (only if the argument is -f). You have to give after a return type (nothing else than int, float or string) and a retValue corresponding to the type given. You also can give arguments to the function with give a type and an arguments or more. You have to finish with the arguments --endFunc\n") ;
+    fprintf(stderr, "In case that the first argument is -f, you can make the times several times by specifying --repeatTest x, wich is going to test x times the functions\n") ;
     fprintf(stderr, "---********************************---\n") ;
     fprintf(stderr, "show if all is good or the type of error. This framework tests also currents exceptions\n") ;
 

@@ -1,6 +1,6 @@
 #ifndef TESTSH
 
-    #define TESTSH 1
+    #define TESTSH
     #define _GNU_SOURCE
 
     #include "main.h"
