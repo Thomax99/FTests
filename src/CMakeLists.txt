@@ -9,3 +9,5 @@ include_directories(../include)
 
 add_executable(ftests main.c tests.c ftests_get_args.c utilitaries.c func_args.c)
 add_executable(file_test test_file.c)
+
+target_link_libraries(ftests m)

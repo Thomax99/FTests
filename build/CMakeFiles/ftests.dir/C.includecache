@@ -93,6 +93,8 @@ fcntl.h
 -
 errno.h
 -
+math.h
+-
 
 /home/thomas/Documents/FTests/FTests/src/utilitaries.c
 stdio.h

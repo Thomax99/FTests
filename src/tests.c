@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <math.h>
 
 jmp_buf env ;
 int pid_son = 0 ;
@@ -27,8 +28,121 @@ void handler(int signal){
     kill(pid_son, SIGSTOP) ;
 }
 
+int loghome(int i){
+    int acc = 0 ;
+    if (i < 0) i = -i ;
+    if (i == 0) return 2 ;
+    while (i > 0){
+        i/=10 ;
+        acc++ ;
+    }
+    return acc+1 ;
+}
+
 
 int ftests_test_main(ftests_args_t * args){
+    if (args->functionVariableTested){
+        //we have to make a file and compile it
+        int fd = open("./tmp1.c", O_WRONLY|O_CREAT|O_TRUNC, 0660) ; //we create the file needed
+        if (fd == -1){
+            perror("creating file for function testing") ;
+            exit(1) ;
+        }
+        char header[strlen("#include \" \"\n#include <string.h>\n#include <stdio.h>\n")+strlen(args->programName)+3] ;
+        sprintf(header, "#include \"%s\"\n #include <string.h>\n#include <stdio.h>\n", args->programName) ;
+
+        write(fd, header, strlen(header)) ;
+
+        char * firstLine = "\nint main(){\nint test;\n" ;
+        write(fd, firstLine, strlen(firstLine)) ;
+
+        ftests_function_argument_variable_t * act = args->funcVar->arguments ; int nb_arg = 0 ;
+        while(act != NULL){
+            int size = (3*loghome(nb_arg)+ loghome(act->min)+ loghome(act->max) + loghome(act->step)) ;
+            char forLine[strlen("for(int i = ; i <  ; i+= ){\n")+ size] ;
+            sprintf(forLine, "for(int i%d = %d; i%d <= %d ; i%d+=%d){\n", nb_arg, act->min, nb_arg, act->max, nb_arg, act->step) ;
+            write(fd, forLine, strlen(forLine)) ;
+            nb_arg++ ; act = act->next_arg ;
+        }
+
+
+        char secondLine[ strlen("if (( ") + strlen(args->funcVar->function_name) + 2] ; //if (func(
+        sprintf(secondLine, "if (%s(", args->funcVar->function_name) ;
+        write(fd, secondLine, strlen(secondLine)) ;
+        for(int i = 0; i < nb_arg; i++){
+            char iLine[3+i] ;
+            if(i == nb_arg-1){
+                sprintf(iLine, "i%d) ", i) ;
+            }
+            else {
+                sprintf(iLine, "i%d, ", i) ;
+            }
+            write(fd, iLine, strlen(iLine)) ;
+        }
+
+        //here, if (func(i1, i2, ..., in)
+
+        char thLine[ strlen(" != (") + strlen(args->funcVar->correct_function_name) + 2] ; //if (func(
+        sprintf(thLine, " != %s(", args->funcVar->correct_function_name) ;
+        write(fd, thLine, strlen(thLine)) ;
+        for(int i = 0; i < nb_arg; i++){
+
+            char iLine[3+i] ;
+            if(i == nb_arg-1){
+                sprintf(iLine, "i%d) ", i) ;
+            }
+            else {
+                sprintf(iLine, "i%d, ", i) ;
+            }
+            write(fd, iLine, strlen(iLine)) ;
+        }
+        //here, if (func(i1, i2, ..., in) != func2(i1, i2, ..., in) 
+        char *  qLine = "){\n" ;
+        write(fd, qLine, strlen(qLine)) ;
+        char * tLineb = "fprintf(stderr, \"error with your function \\n\")" ;
+        write(fd, tLineb, strlen(tLineb)) ;
+        char *  qLineb = ";\n}\n" ;
+        write(fd, qLineb, strlen(qLineb)) ;
+        char * brackclose ="}" ;
+
+        for(int i = 0; i < nb_arg; i++){
+            write(fd, brackclose, strlen(brackclose)) ;
+        }
+
+        char *fLine ="return 0 ;\n}" ;
+        write(fd, fLine, strlen(fLine)) ;
+        close(fd) ;
+
+
+        fprintf(stderr, "___  GCC COMPILATION PROCESSING ...  ___\n") ;
+        int pid = fork() ;
+        if(!pid){
+            //son : we're going to compilate the program here
+            execlp("gcc", "gcc", "./tmp1.c", "-o", "tmp1", "-Werror", NULL) ;
+            perror("function testing file compilation error : ") ;
+            exit(2) ;
+        }
+        int status, compilationError = 0 ;
+        waitpid(pid, &status, 0) ;
+        fprintf(stderr, "___ ... END OF GCC COMPILATION  ___\n\n\n") ;
+        if (WEXITSTATUS(status) != 0){
+            fprintf(stderr, "function error : the compilation of %s on the file %s is impossible\n", args->funcs[0]->name, args->programName) ;
+            compilationError = 1 ;
+        }
+        args->programName = "./tmp1" ;
+
+        // if the return code of the program is 0, there is no problem, else the function doesn't return the good thing
+        args->testReturnCodeRequired = 1;
+        args->normalCode = 0 ;
+
+        //remove("./tmp1.c") ;
+        if (compilationError){
+            remove ("./tmp1") ;
+            return COMPILATIONERRORRETURN ;
+        }
+
+
+    }
     if (args->functionProgramTest){
         //we have to make a file and compile it
 
@@ -47,7 +161,7 @@ int ftests_test_main(ftests_args_t * args){
 
         if (!args->repeatedTestRequired)
             args->timesRepeatTest = 1 ;
-        char secondLine[strlen("for(int line = 0; line <  ; line++){\n") + args->timesRepeatTest + 2] ;
+        char secondLine[strlen("for(int line = 0; line <  ; line++){\n") + loghome(args->timesRepeatTest) + 2] ;
         sprintf(secondLine, "for(int line = 0; line < %ld ; line++){\n", args->timesRepeatTest) ;
         write(fd, secondLine, strlen(secondLine)) ;
         for(int i = 0 ; i < args->nb_function_to_test; i++){

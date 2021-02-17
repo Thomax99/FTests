@@ -30,8 +30,8 @@ void free_args(ftests_args_t * args){
 
 void get_args(ftests_args_t * args, int argc, char ** argv){
     //recup of first arg
-    if (argc < 2 || (strcmp(argv[1], "-c") != 0 && strcmp(argv[1], "-f") != 0)){
-        fprintf(stderr, "first argument has to be -c or -f\n") ;
+    if (argc < 2 || (strcmp(argv[1], "-c") != 0 && strcmp(argv[1], "-f") != 0 && strcmp(argv[1], "-x") != 0)){
+        fprintf(stderr, "first argument has to be -c or -f or -x\n") ;
         usage() ;
         exit(1) ;
     }
@@ -40,8 +40,69 @@ void get_args(ftests_args_t * args, int argc, char ** argv){
         usage() ;
         exit(1) ;
     }
+    int passAnalyze = 0;
+    // if the first argument is -x, we have a variable function testing
     args->programName = argv[2] ;
-    for (int i = 0; i < argc; i++){
+    if (strcmp(argv[1], "-x") == 0){
+        passAnalyze = 1 ;
+        if (argc < 5){
+            fprintf(stderr, "need a function to test and a correct function to compare\n") ;
+            usage() ;
+            exit(1) ;
+        }
+        args->functionVariableTested = 1 ;
+        args->funcVar = malloc(sizeof(ftests_function_variable_t)) ;
+        args->funcVar->function_name = argv[3] ;
+        args->funcVar->correct_function_name = argv[4] ;
+        args->funcVar->arguments = malloc(sizeof(ftests_function_argument_variable_t)) ;
+        ftests_function_argument_variable_t * start = malloc(sizeof(ftests_function_argument_variable_t)), *last = start, * unlast = NULL ; ;
+        for(int i = 5; i < argc; i+=3){
+            if (i+1 >= argc || i+2 >= argc){
+                fprintf(stderr, "The variable arguments has to be triolets ...\n") ;
+                usage() ;
+                exit(1) ;
+            }
+            char * endPtr ;
+            long min = strtol(argv[i], &endPtr, 10) ;
+            if (*endPtr != '\0'){
+                fprintf(stderr, "the min has to be valid : %s is not valid\n", argv[i]) ;
+                usage() ;
+                exit(1) ;
+            }
+            long max = strtol(argv[i+1], &endPtr, 10) ;
+            if (*endPtr != '\0'){
+                fprintf(stderr, "the max has to be valid : %s is not valid\n", argv[i+1]) ;
+                usage() ;
+                exit(1) ;
+            }
+            long step = strtol(argv[i+2], &endPtr, 10) ;
+            if (*endPtr != '\0'){
+                fprintf(stderr, "the step has to be valid : %s is not valid\n", argv[i+2]) ;
+                usage() ;
+                exit(1) ;
+            }
+            if (min > max){
+                fprintf(stderr, "min has to be inferior than max\n") ;
+                usage() ;
+                exit(1) ;
+            }
+            if (step <= 0){
+                fprintf(stderr, "step has to be positive\n") ;
+                usage() ;
+                exit(1) ;
+            }
+            last->max = max ; last->min = min ; last->step = step ;
+            last->next_arg = malloc(sizeof(ftests_function_argument_variable_t)) ;
+            unlast = last ;
+            last = last->next_arg ;
+        }
+        if (start != last){
+            args->funcVar->arguments = start ;
+        }
+        free(last) ;
+        unlast->next_arg = NULL ;
+    }
+    for (int i = 0; i < argc && !passAnalyze ; i++){
         if (strcmp(argv[i], "-c") == 0){
             args->compilatedProgramTest = 1 ;
         }

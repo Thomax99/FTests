@@ -6,6 +6,19 @@
         int isString ;
     }  ftests_function_argument_t ;
 
+    typedef struct favt{
+        int min ;
+        int max ;
+        int step ;
+        struct favt * next_arg ;
+    }   ftests_function_argument_variable_t ;
+
+    typedef struct {
+        char * function_name ;
+        char * correct_function_name ;
+        ftests_function_argument_variable_t * arguments ;
+    } ftests_function_variable_t ;
+
     typedef struct {
         int returntype ;
         char * name ;
@@ -24,10 +37,12 @@
         int testReturnCodeRequired ;
         int programTested ;
         int functionTested ;
+        int functionVariableTested ;
         int normalCode ;
         int testOutputRequired ;
         char * outputFilename ;
         ftests_function_t ** funcs ;
+        ftests_function_variable_t * funcVar ;
         int nb_function_to_test ;
         int nb_max_function ;
         int testTimeRequired ; // to know if we have to manage a time testing

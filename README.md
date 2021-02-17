@@ -38,6 +38,20 @@ You can also give arguments to a function to test it by specifying after the ret
 ./ftests -f ./file.c --function hello int 4 bonjour string 1 int --endFunc
 ```
 
+## Function comparing
+
+In case that you have a function that you know it returns the good value, and which have the same skeleton than your function, you can launch a comparaison between the two functions and lauch it on variable arguments with integer type varying between 0 and 100 with a step of 2.
+
+You have to give in first argument the ```-x``` parameter.
+
+After, you give the file of the function (without main function on it) directly the function name, and the correct function name. You give after the triolets of (min max step) which are going to be given on the order. 
+
+### Example
+
+```bash
+./ftests -x ./file.c function correctFunction 0 100 2 1 201 3
+```
+
 ## General options
 
 Some options could be given each for ```-f``` or ```-c``` options. Those are :
