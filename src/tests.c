@@ -65,10 +65,50 @@ int ftests_test_main(ftests_args_t * args){
             nb_arg++ ; act = act->next_arg ;
         }
 
+        char line[strlen("int value = (") + strlen(args->funcVar->function_name) + 2] ; //int value = func(
+        sprintf(line, "int value = %s(", args->funcVar->function_name) ;
+        write(fd, line, strlen(line)) ;
+        for(int i = 0; i < nb_arg; i++){
+            char iLine[3+loghome(i)+5] ;
+            if(i == nb_arg-1){
+                sprintf(iLine, "i%d); ", i) ;
+            }
+            else {
+                sprintf(iLine, "i%d, ", i) ;
+            }
+            write(fd, iLine, strlen(iLine)) ;
+        } 
+        //here, int value = func(i1, i2, ..., in) ;
 
-        char secondLine[ strlen("if (( ") + strlen(args->funcVar->function_name) + 2] ; //if (func(
-        sprintf(secondLine, "if (%s(", args->funcVar->function_name) ;
+        char cLine[strlen("\nint correct_value = (") + strlen(args->funcVar->correct_function_name) + 2] ; //int value = correctFunc(
+        sprintf(cLine, "\nint correct_value = %s(", args->funcVar->correct_function_name) ;
+        write(fd, cLine, strlen(cLine)) ;
+        for(int i = 0; i < nb_arg; i++){
+            char iLine[3+loghome(i)+5] ;
+            if(i == nb_arg-1){
+                sprintf(iLine, "i%d); ", i) ;
+            }
+            else {
+                sprintf(iLine, "i%d, ", i) ;
+            }
+            write(fd, iLine, strlen(iLine)) ;
+        } 
+        //here, int correct_value = correctFunc(i1, i2, ..., in) ;
+        char * secondLine = "if (value != correct_value){\n" ;
         write(fd, secondLine, strlen(secondLine)) ;
+
+        //we have to write fprintf(stderr, "error with your func : it returns %d while it should return %d, for arguments %d %d %d .... %d", value, correctValue, i0, i2, ..., in) ;
+        char * lineAfter = "fprintf(stderr, \"error with your function %s : it returns %d while it should return %d for arguments " ;
+        write(fd, lineAfter, strlen(lineAfter)) ;
+        for(int i =0; i < nb_arg; i++){
+            char * iLine ="%d " ;
+            write(fd, iLine, strlen(iLine)) ;
+        }
+        char retLine[strlen("\\n\", ")+strlen(args->funcVar->function_name) + 3] ;
+        sprintf(retLine, "\\n\", \"%s\"", args->funcVar->function_name) ;
+        write(fd, retLine, strlen(retLine)) ;
+        char * lineee =", value, correct_value, " ;
+        write(fd, lineee, strlen(lineee)) ;
         for(int i = 0; i < nb_arg; i++){
             char iLine[3+i] ;
             if(i == nb_arg-1){
@@ -80,29 +120,9 @@ int ftests_test_main(ftests_args_t * args){
             write(fd, iLine, strlen(iLine)) ;
         }
 
-        //here, if (func(i1, i2, ..., in)
+        char * linee =";\nreturn 1 ;\n}" ;
+        write(fd, linee, strlen(linee)) ;
 
-        char thLine[ strlen(" != (") + strlen(args->funcVar->correct_function_name) + 2] ; //if (func(
-        sprintf(thLine, " != %s(", args->funcVar->correct_function_name) ;
-        write(fd, thLine, strlen(thLine)) ;
-        for(int i = 0; i < nb_arg; i++){
-
-            char iLine[3+i] ;
-            if(i == nb_arg-1){
-                sprintf(iLine, "i%d) ", i) ;
-            }
-            else {
-                sprintf(iLine, "i%d, ", i) ;
-            }
-            write(fd, iLine, strlen(iLine)) ;
-        }
-        //here, if (func(i1, i2, ..., in) != func2(i1, i2, ..., in) 
-        char *  qLine = "){\n" ;
-        write(fd, qLine, strlen(qLine)) ;
-        char * tLineb = "fprintf(stderr, \"error with your function \\n\")" ;
-        write(fd, tLineb, strlen(tLineb)) ;
-        char *  qLineb = ";\n}\n" ;
-        write(fd, qLineb, strlen(qLineb)) ;
         char * brackclose ="}" ;
 
         for(int i = 0; i < nb_arg; i++){
@@ -165,17 +185,23 @@ int ftests_test_main(ftests_args_t * args){
         sprintf(secondLine, "for(int line = 0; line < %ld ; line++){\n", args->timesRepeatTest) ;
         write(fd, secondLine, strlen(secondLine)) ;
         for(int i = 0 ; i < args->nb_function_to_test; i++){
+            char * line = "fprintf(stderr, \"___EXEC__\\n\");\n" ;
+            write(fd, line, strlen(line)) ;
             char * sLine = getFunctionTest(args->funcs[i]) ;
 
             write(fd, sLine, strlen(sLine)) ;
             free(sLine) ;
 
+            char * line2 = "fprintf(stderr, \"___END_EXEC__\\n\");\n" ;
+            write(fd, line2, strlen(line2)) ;
+
+
             char * tLine = "if (!test){\n" ;
             write(fd, tLine, strlen(tLine)) ;
 
-            char  tLineb[strlen("fprintf(stderr, \"You're function  doesn't return \\n\");\n}\n")+ strlen(args->funcs[i]->name) + strlen(args->funcs[i]->value) + 1] ;
+            char  tLineb[strlen("fprintf(stderr, \"You're function  doesn't return \\n\");\nreturn 1 ;\n}\n")+ strlen(args->funcs[i]->name) + strlen(args->funcs[i]->value) + 1] ;
 
-            sprintf(tLineb, "fprintf(stderr, \"You're function %s doesn't return %s\\n\");\n}\n", args->funcs[i]->name, args->funcs[i]->value) ;
+            sprintf(tLineb, "fprintf(stderr, \"You're function %s doesn't return %s\\n\");\nreturn 1 ;\n}\n", args->funcs[i]->name, args->funcs[i]->value) ;
             write(fd, tLineb, strlen(tLineb)) ;
 
         }
@@ -209,7 +235,7 @@ int ftests_test_main(ftests_args_t * args){
         args->testReturnCodeRequired = 1;
         args->normalCode = 0 ;
 
-        remove("./tmp1.c") ;
+        //remove("./tmp1.c") ;
         if (compilationError){
             remove ("./tmp1") ;
             return COMPILATIONERRORRETURN ;
@@ -238,7 +264,7 @@ int ftests_test_main(ftests_args_t * args){
             close(tube[1]) ;
         }
         else {
-            close(1) ;
+            //close(1) ;
         }
         if (args->arguments_enabled){
             *(args->arguments_program) = args->programName ; //uggly manip but we ensure that this is good : args are not the first argument : there is the first argument --args before ...
@@ -319,9 +345,12 @@ int ftests_test_main(ftests_args_t * args){
     if (args->testReturnCodeRequired){
         // we have to test the return code
         if (WEXITSTATUS(status) != args->normalCode){
-            if (args->functionProgramTest){
+            if (args->functionVariableTested){
+                fprintf(stderr, "function variable error -> your function %s is doesn't good everytime\n", args->funcVar->function_name) ;
+                return ANORMALFUNCTIONRETURNERROR ;
+            }
+            if (args->functionProgramTest ){
                 // the function doesn't return the good thing
-                fprintf(stderr, "function error -> your function %s doesn't return %s as you want\n", args->funcs[0]->name, args->funcs[0]->value) ;
                 return ANORMALFUNCTIONRETURNERROR ;
             }
             fprintf(stderr, "return code -> the program has returned %d while it should have return %d\n", WEXITSTATUS(status), args->normalCode) ;

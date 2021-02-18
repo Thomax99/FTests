@@ -221,6 +221,12 @@ void get_args(ftests_args_t * args, int argc, char ** argv){
             break ; // after --args, there is no arguments for the code
         }
         else if (strcmp(argv[i], "--testOutput") == 0){
+            if (args->functionTested || args->functionVariableTested){
+                //error
+                fprintf(stderr, "you can't test the output of a function directly\n") ;
+                usage() ;
+                exit(1) ;
+            }
             args->testOutputRequired = 1 ;
             if (i+1 >= argc){
                 //error

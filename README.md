@@ -12,6 +12,9 @@ The first argument that you have to give is ```-c```. After you have to give the
 
 You can give the option ```--enableReturnCode code```, to test the return code of the the given program.
 
+- ```--testOutput output``` for testing the output of the program on the standard output with the file named output
+
+
 You can also give the option ```--args arg1 arg2 arg3 ...``` to give some arguments to the program.
 
 ### Example
@@ -44,7 +47,7 @@ In case that you have a function that you know it returns the good value, and wh
 
 You have to give in first argument the ```-x``` parameter.
 
-After, you give the file of the function (without main function on it) directly the function name, and the correct function name. You give after the triolets of (min max step) which are going to be given on the order. 
+After, you give the file of the function (without main function on it) directly the function name, and the correct function name. You give after the triolets of (min max step) which are going to be given on the order.
 
 ### Example
 
@@ -57,5 +60,3 @@ After, you give the file of the function (without main function on it) directly 
 Some options could be given each for ```-f``` or ```-c``` options. Those are :
 
 - ```--timeEnabled time``` for stopping the test after time seconds
-- ```--testOutput output``` for testing the output of the program on the standard output with the file named output
-

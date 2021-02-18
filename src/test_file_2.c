@@ -19,5 +19,5 @@ int func4(int a, int b){
 }
 
 int func5(int a, int b){
-    return a + b ;
+    return a - b ;
 }
